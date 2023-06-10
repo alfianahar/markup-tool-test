@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, useRef } from "react";
+import { ChangeEventHandler, useRef } from "react";
 import DeleteButton from "./buttons/DeleteButton";
 import { ImagePlus, Square } from "lucide-react";
 import DarkModeToggle from "./buttons/DarkModeToggle";
