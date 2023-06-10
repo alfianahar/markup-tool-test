@@ -66,12 +66,12 @@ const FloatingMenuBar = (props: any) => {
   console.log(drawMode);
 
   const shapesButton = [
-    { shape: Square, mode: "RECT" },
-    { shape: Circle, mode: "ELLIPSE" },
-    { shape: Triangle, mode: "TRIANGLE" },
-    { shape: Minus, mode: "LINE" },
-    { shape: Pencil, mode: "PEN" },
-    { shape: Type, mode: "Type" },
+    { shape: Square, mode: "RECT", size: 24 },
+    { shape: Circle, mode: "ELLIPSE", size: 24 },
+    { shape: Triangle, mode: "TRIANGLE", size: 24 },
+    { shape: Minus, mode: "LINE", size: 26 },
+    { shape: Pencil, mode: "PEN", size: 22 },
+    { shape: Type, mode: "Type", size: 22 },
   ];
 
   return (
@@ -97,7 +97,7 @@ const FloatingMenuBar = (props: any) => {
             <el.shape
               onClick={() => toggleDrawingMode(el.mode)}
               color="#4a967a"
-              size={24}
+              size={el.size}
             />
           </div>
         ))}
