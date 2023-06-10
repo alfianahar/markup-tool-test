@@ -5,6 +5,7 @@ import Canvas from "./components/canvas/Canvas";
 
 function App() {
   const [isDrawing, setIsDrawing] = useState(false);
+  const [drawMode, setDrawMode] = useState("");
   const [rectangles, setRectangles] = useState<any[]>([]);
   const [selectedId, selectShape] = useState<any>(null);
   const [image, setImage] = useState<ImageData | null>(null);
@@ -43,6 +44,8 @@ function App() {
         setIsDrawing={setIsDrawing}
         selectedId={selectedId}
         handleDelete={handleDelete}
+        drawMode={drawMode}
+        setDrawMode={setDrawMode}
       />
       <Canvas
         image={image}
@@ -52,6 +55,8 @@ function App() {
         selectShape={selectShape}
         isDrawing={isDrawing}
         setIsDrawing={setIsDrawing}
+        drawMode={drawMode}
+        setDrawMode={setDrawMode}
       />
     </div>
   );

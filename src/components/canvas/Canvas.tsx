@@ -97,7 +97,6 @@ const Canvas = (props: any) => {
               selectShape(image.id);
             }}
             onChange={(newAttrs: any) => {
-              console.log(newAttrs);
               const img = rectangles.slice();
               const index = img.findIndex((r: ImageData) => r.id === image.id);
               img[index] = newAttrs;

@@ -1,6 +1,14 @@
 import { ChangeEventHandler, useRef } from "react";
 import DeleteButton from "./buttons/DeleteButton";
-import { ImagePlus, Square } from "lucide-react";
+import {
+  ImagePlus,
+  Square,
+  Circle,
+  Triangle,
+  Minus,
+  Pencil,
+  Type,
+} from "lucide-react";
 import DarkModeToggle from "./buttons/DarkModeToggle";
 import { v4 as uuidv4 } from "uuid";
 
@@ -10,15 +18,19 @@ const FloatingMenuBar = (props: any) => {
   const {
     image,
     setImage,
-
     isDrawing,
     setIsDrawing,
     selectedId,
     handleDelete,
+    drawMode,
+    setDrawMode,
   } = props;
 
-  const toggleDrawingMode = () => {
-    setIsDrawing(!isDrawing);
+  const toggleDrawingMode = (e: string) => {
+    if (!isDrawing) {
+      setIsDrawing(!isDrawing);
+    }
+    setDrawMode(e);
   };
 
   const handleUploadImageClick = () => {
@@ -51,12 +63,21 @@ const FloatingMenuBar = (props: any) => {
     };
     reader.readAsDataURL(file);
   };
+  console.log(drawMode);
+
+  const shapesButton = [
+    { shape: Square, mode: "RECT" },
+    { shape: Circle, mode: "ELLIPSE" },
+    { shape: Triangle, mode: "TRIANGLE" },
+    { shape: Minus, mode: "LINE" },
+    { shape: Pencil, mode: "PEN" },
+    { shape: Type, mode: "Type" },
+  ];
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[999] mb-12 flex items-center justify-center space-x-6">
       <div className="flex items-center rounded-xl bg-background p-1 px-3 text-text drop-shadow-2xl dark:bg-gray-700">
         <DeleteButton onClick={handleDelete} disabled={!selectedId} />
-
         <span className="ml-4 mr-2 h-6 border border-accent"></span>
         <div className="mx-0.5 rounded-xl p-2 transition-all duration-150 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button">
           <ImagePlus
@@ -65,13 +86,34 @@ const FloatingMenuBar = (props: any) => {
             size={24}
           />
         </div>
-        <div
+        {shapesButton.map((el: any) => (
+          <div
+            className={`mx-0.5 rounded-xl p-2 transition-all duration-100 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button ${
+              isDrawing && drawMode === el.mode
+                ? "bg-dark-secondary-button dark:bg-secondary-button"
+                : ""
+            }`}
+          >
+            <el.shape
+              onClick={() => toggleDrawingMode(el.mode)}
+              color="#4a967a"
+              size={24}
+            />
+          </div>
+        ))}
+        {/* <div
           className={`mx-0.5 rounded-xl p-2 transition-all duration-150 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button ${
-            isDrawing ? "bg-dark-secondary-button dark:bg-secondary-button" : ""
+            isDrawing && drawMode === "ELLIPSE"
+              ? "bg-dark-secondary-button dark:bg-secondary-button"
+              : ""
           }`}
         >
-          <Square onClick={toggleDrawingMode} color="#4a967a" size={24} />
-        </div>
+          <Circle
+            onClick={() => toggleDrawingMode("ELLIPSE")}
+            color="#4a967a"
+            size={24}
+          />
+        </div> */}
         <input
           key={image?.id}
           type="file"
