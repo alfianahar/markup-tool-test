@@ -9,14 +9,12 @@ const DeleteButton = ({ onClick, disabled }: DeleteButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`rounded-full p-4 transition-all duration-500 ${
-        disabled ? "bg-gray-500" : " bg-red-500"
-      } ${
+      className={` ${disabled ? "" : " bg-red-500"} ${
         disabled ? "cursor-not-allowed" : "cursor-pointer"
-      } rounded-full p-2 transition-colors duration-300 ease-in-out`}
+      } rounded-xl p-2 transition-all duration-150 ease-in`}
       disabled={disabled}
     >
-      <Trash2 />
+      <Trash2 size={22} />
     </button>
   );
 };

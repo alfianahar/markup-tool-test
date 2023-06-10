@@ -9,9 +9,26 @@ export interface Rectangle {
   id: string;
 }
 
-export interface DrawRectangleProps {
+export interface RectangleLayerProps {
   shapeProps: Rectangle;
   isSelected: boolean;
   onSelect: () => void;
   onChange: (newAttrs: Rectangle) => void;
+}
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
+export interface Size {
+  width: number;
+  height: number;
+}
+
+export interface ImageData {
+  id: string;
+  src: HTMLImageElement;
+  position: Position;
+  size: Size;
 }
