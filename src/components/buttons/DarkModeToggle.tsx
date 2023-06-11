@@ -14,7 +14,7 @@ const DarkModeToggle = () => {
   };
 
   return (
-    <div className="fixed right-20 rounded-full border-2 border-dark-background bg-background p-3 transition-all duration-200 dark:border-background dark:bg-dark-background">
+    <div className="fixed right-10 rounded-full border-2 border-dark-background bg-background p-3 transition-all duration-200 dark:border-background dark:bg-dark-background">
       <DarkModeSwitch
         // style={{ marginBottom: "2rem" }}
         checked={darkSide}

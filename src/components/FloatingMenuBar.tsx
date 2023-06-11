@@ -8,6 +8,7 @@ import {
   Minus,
   Pencil,
   Type,
+  Info,
 } from "lucide-react";
 import DarkModeToggle from "./buttons/DarkModeToggle";
 import { v4 as uuidv4 } from "uuid";
@@ -97,59 +98,70 @@ const FloatingMenuBar = (props: any) => {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[999] mb-12 flex items-center justify-center space-x-6">
-      <div className="flex items-center rounded-xl bg-background p-1 px-3 text-text drop-shadow-2xl dark:bg-gray-700">
-        <DeleteButton onClick={handleDelete} disabled={!selectedId} />
-        <span className="ml-4 mr-2 h-6 border border-accent"></span>
-        <div className="mx-0.5 rounded-xl p-2 transition-all duration-150 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button">
-          <ImagePlus
-            onClick={handleUploadImageClick}
-            color="#4a967a"
-            size={24}
-          />
-        </div>
-        {shapesButton.map((el: any) => (
-          <div
-            key={el.mode}
-            className={`mx-0.5 rounded-xl p-2 transition-all duration-100 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button ${
-              isDrawing && drawMode === el.mode
-                ? "bg-dark-secondary-button dark:bg-secondary-button"
-                : ""
-            }`}
-          >
-            <el.shape
-              onClick={() => toggleDrawingMode(el.mode)}
+    <div className="fixed left-0 right-0 top-0 z-[999] mt-5 flex flex-col items-center justify-center space-x-6">
+      <div className="flex items-center justify-center space-x-6">
+        <div className="flex items-center rounded-xl bg-background p-1 px-3 text-text drop-shadow-xl dark:bg-gray-700 dark:shadow-xl dark:shadow-accent/30">
+          <DeleteButton onClick={handleDelete} disabled={!selectedId} />
+          <span className="ml-4 mr-2 h-6 border border-accent"></span>
+          <div className="mx-0.5 rounded-xl p-2 transition-all duration-150 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button">
+            <ImagePlus
+              onClick={handleUploadImageClick}
               color="#4a967a"
-              size={el.size}
+              size={24}
             />
           </div>
-        ))}
-        <input
-          key={image?.id}
-          type="file"
-          className="hidden"
-          ref={fileEl}
-          onChange={handleFileChange}
-        />
-        <span className="ml-2 mr-4 h-6 border border-accent"></span>
-        <div ref={containerRef}>
-          <div
-            style={{ backgroundColor: selectedColor }}
-            className="rounded-md border-2 border-dark-background p-3 transition-all duration-100 ease-in dark:border-white"
-            onClick={toggleColorPicker}
-          ></div>
-          {showColorPicker && (
-            <div className="absolute -bottom-10 -right-44 z-10">
-              <BlockPicker
-                color={selectedColor}
-                onChange={(col) => setSelectedColor(col.hex)}
-                triangle="hide"
+          {shapesButton.map((el: any) => (
+            <div
+              key={el.mode}
+              className={`mx-0.5 rounded-xl p-2 transition-all duration-100 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button ${
+                isDrawing && drawMode === el.mode
+                  ? "bg-dark-secondary-button dark:bg-secondary-button"
+                  : ""
+              }`}
+            >
+              <el.shape
+                onClick={() => toggleDrawingMode(el.mode)}
+                color="#4a967a"
+                size={el.size}
               />
             </div>
-          )}
+          ))}
+          <input
+            key={image?.id}
+            type="file"
+            className="hidden"
+            ref={fileEl}
+            onChange={handleFileChange}
+          />
+          <span className="ml-2 mr-4 h-6 border border-accent"></span>
+          <div ref={containerRef}>
+            <div
+              style={{ backgroundColor: selectedColor }}
+              className="rounded-md border-2 border-dark-background p-3 transition-all duration-100 ease-in dark:border-white"
+              onClick={toggleColorPicker}
+            ></div>
+            {showColorPicker && (
+              <div className="absolute -bottom-2 -right-44 z-10">
+                <BlockPicker
+                  color={selectedColor}
+                  onChange={(col) => setSelectedColor(col.hex)}
+                  triangle="hide"
+                />
+              </div>
+            )}
+          </div>
         </div>
+        <DarkModeToggle />
       </div>
-      <DarkModeToggle />
+      {isDrawing && (drawMode === "RECT" || drawMode === "ELLIPSE") && (
+        <div className="mt-4 flex items-center space-x-2 text-xs text-text/80 dark:text-white/40">
+          <Info size={20} />
+          <p className="font-mono ">
+            Press SHIFT when drawing to make it in{" "}
+            {drawMode === "RECT" ? "SQUARE" : "CIRCLE"} shape
+          </p>
+        </div>
+      )}
     </div>
   );
 };
