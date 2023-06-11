@@ -141,11 +141,11 @@ const FloatingMenuBar = (props: any) => {
               onClick={toggleColorPicker}
             ></div>
             {showColorPicker && (
-              <div className="absolute -bottom-2 -right-44 z-10">
+              <div className="absolute -right-[3.75rem] z-10 mt-4">
                 <BlockPicker
                   color={selectedColor}
                   onChange={(col) => setSelectedColor(col.hex)}
-                  triangle="hide"
+                  triangle="top"
                 />
               </div>
             )}
