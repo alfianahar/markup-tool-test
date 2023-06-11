@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Ellipse, Layer, Rect, Stage } from "react-konva";
 import ImageLayer from "./ImageLayer";
 import { ImageData, Shape } from "../../types/types";
@@ -29,8 +29,8 @@ const Canvas = (props: any) => {
     isDrawing,
     setIsDrawing,
     drawMode,
-    setDrawMode,
     selectedColor,
+    setSelectedColor,
   } = props;
 
   const checkDeselect = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -68,30 +68,6 @@ const Canvas = (props: any) => {
         setCurrentEllipse(newEllipse);
       }
     }
-    // if (drawMode === "RECT") {
-    //   const newRectangle = {
-    //     x: position.x,
-    //     y: position.y,
-    //     width: 0,
-    //     height: 0,
-    //     fill: selectedColor,
-    //     draggable: true,
-    //     id: uuidv4(), // Generate a unique ID for each rectangle
-    //   };
-    //   setCurrentRectangle(newRectangle);
-    // }
-    // if (drawMode === "ELLIPSE") {
-    //   const newEllipse = {
-    //     x: position.x,
-    //     y: position.y,
-    //     radiusX: 0,
-    //     radiusY: 0,
-    //     fill: selectedColor,
-    //     draggable: true,
-    //     id: uuidv4(),
-    //   };
-    //   setCurrentEllipse(newEllipse);
-    // }
     checkDeselect(e);
   };
 
@@ -144,6 +120,17 @@ const Canvas = (props: any) => {
     }
   };
 
+  useEffect(() => {
+    const index = items.findIndex((r: Shape) => r.id === selectedId);
+    if (index !== -1 && items[index].fill !== selectedColor) {
+      const updatedItems = [...items];
+      updatedItems[index].fill = selectedColor;
+      setItems(updatedItems);
+    }
+  }, [selectedId, selectedColor, items]);
+
+  console.log(items);
+
   return (
     <Stage
       width={window.innerWidth}
@@ -177,14 +164,16 @@ const Canvas = (props: any) => {
             isSelected={shape.id === selectedId}
             onSelect={() => {
               selectShape(shape.id);
+              setSelectedColor(shape.fill);
             }}
             onChange={(newAttrs: Shape) => {
-              const rects = items.slice();
-              const index = rects.findIndex((r: Shape) => r.id === shape.id);
-              rects[index] = newAttrs;
-              setItems(rects);
+              const shapes = items.slice();
+              const index = shapes.findIndex((r: Shape) => r.id === shape.id);
+              shapes[index] = newAttrs;
+              setItems(shapes);
             }}
-            selectedColor={selectedColor}
+            // selectedColor={selectedColor}
+            // setSelectedColor={setSelectedColor}
             drawMode={drawMode}
           />
         ))}

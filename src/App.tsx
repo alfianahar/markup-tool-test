@@ -57,8 +57,8 @@ function App() {
         isDrawing={isDrawing}
         setIsDrawing={setIsDrawing}
         drawMode={drawMode}
-        setDrawMode={setDrawMode}
         selectedColor={selectedColor}
+        setSelectedColor={setSelectedColor}
       />
     </div>
   );

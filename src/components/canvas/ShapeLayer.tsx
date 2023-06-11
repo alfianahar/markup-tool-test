@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShapeLayerProps } from "../../types/types";
-import { Rect, Transformer } from "react-konva";
+import { Ellipse, Rect, Transformer } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 
@@ -9,16 +9,15 @@ const ShapeLayer = ({
   isSelected,
   onSelect,
   onChange,
-  selectedColor,
-}: ShapeLayerProps) => {
+}: // selectedColor,
+// setSelectedColor,
+ShapeLayerProps) => {
   const [node, setNode] = useState<
     Konva.Rect | Konva.Ellipse | Konva.Text | null
   >();
   const trRef = useRef<Konva.Transformer>(null);
-
   const shapeType = shapeProps.type;
-
-  console.log(shapeType);
+  // const prevSelectedColor = useRef<string | undefined>(selectedColor);
 
   const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
     onChange({
@@ -29,6 +28,7 @@ const ShapeLayer = ({
   };
 
   const handleTransformEnd = (e: KonvaEventObject<DragEvent>) => {
+    const node = e.target;
     if (!node) return;
     const scaleX = node.scaleX();
     const scaleY = node.scaleY();
@@ -54,26 +54,52 @@ const ShapeLayer = ({
     }
   }, [isSelected]);
 
-  useEffect(() => {
-    if (node && isSelected) {
-      node.setAttrs({
-        fill: selectedColor,
-      });
-    }
-  }, [isSelected, selectedColor]);
+  // useEffect(() => {
+  //   if (!isSelected) {
+  //     prevSelectedColor.current = selectedColor;
+  //   }
+  // }, [selectedColor, isSelected]);
 
+  // useEffect(() => {
+  //   if (
+  //     node &&
+  //     isSelected &&
+  //     selectedColor &&
+  //     prevSelectedColor.current !== selectedColor
+  //   ) {
+  //     node.setAttrs({
+  //       fill: selectedColor,
+  //     });
+  //   }
+  // }, [node, isSelected, selectedColor, setSelectedColor]);
+  // console.log(shapeProps);
   return (
     <>
-      <Rect
-        onClick={onSelect}
-        ref={(node) => {
-          setNode(node);
-        }}
-        {...shapeProps}
-        draggable
-        onDragEnd={handleDragEnd}
-        onTransformEnd={handleTransformEnd}
-      />
+      {shapeType === "RECT" && (
+        <Rect
+          onClick={onSelect}
+          ref={(node) => {
+            setNode(node);
+          }}
+          {...shapeProps}
+          draggable
+          onDragEnd={handleDragEnd}
+          onTransformEnd={handleTransformEnd}
+        />
+      )}
+      {shapeType === "ELLIPSE" && (
+        <Ellipse
+          onClick={onSelect}
+          ref={(ref) => {
+            setNode(ref);
+          }}
+          {...shapeProps}
+          fill={shapeProps.fill}
+          draggable
+          onDragEnd={handleDragEnd}
+          onTransformEnd={handleTransformEnd}
+        />
+      )}
       {isSelected && (
         <Transformer
           ref={trRef}

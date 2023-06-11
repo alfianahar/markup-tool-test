@@ -26,7 +26,8 @@ export interface ShapeLayerProps {
   isSelected: boolean;
   onSelect: () => void;
   onChange: (newAttrs: Shape) => void;
-  selectedColor?: string;
+  // selectedColor?: string;
+  // setSelectedColor?: (color: string) => void;
   drawMode?: string;
 }
 
