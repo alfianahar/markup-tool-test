@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ImageData } from "./types/types";
 import FloatingMenuBar from "./components/FloatingMenuBar";
 import Canvas from "./components/canvas/Canvas";
+import DarkModeToggle from "./components/buttons/DarkModeToggle";
 
 function App() {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -48,6 +49,8 @@ function App() {
         selectedColor={selectedColor}
         setSelectedColor={setSelectedColor}
       />
+      <DarkModeToggle />
+
       <Canvas
         image={image}
         items={items}

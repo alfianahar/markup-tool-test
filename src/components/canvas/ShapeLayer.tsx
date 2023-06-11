@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShapeLayerProps } from "../../types/types";
-import { Ellipse, Rect, RegularPolygon, Transformer } from "react-konva";
+import { Ellipse, Line, Rect, RegularPolygon, Transformer } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 
@@ -11,7 +11,7 @@ const ShapeLayer = ({
   onChange,
 }: ShapeLayerProps) => {
   const [node, setNode] = useState<
-    Konva.Rect | Konva.Ellipse | Konva.RegularPolygon | null
+    Konva.Rect | Konva.Ellipse | Konva.RegularPolygon | Konva.Line | null
   >();
   const trRef = useRef<Konva.Transformer>(null);
   const shapeType = shapeProps.type;
@@ -29,12 +29,12 @@ const ShapeLayer = ({
     if (!node) return;
     const scaleX = node.scaleX();
     const scaleY = node.scaleY();
-
     // we will reset it back
     node.scaleX(1);
     node.scaleY(1);
     const [width, height] = [scaleX * node.width(), scaleY * node.height()];
     console.log(node);
+    console.log(width, height);
     onChange({
       ...shapeProps,
       x: node.x(),
@@ -49,10 +49,11 @@ const ShapeLayer = ({
         radiusY: Math.floor(height / 2),
       }),
       ...(shapeType === "TRIANGLE" && {
-        // radius:
-        //   Math.max(scaleX, scaleY) * Math.max(node.width(), node.height()),
         radius: (node.width() / 2) * scaleX,
-        // height: height,
+      }),
+      ...(shapeType === "LINE" && {
+        width: width,
+        height: height,
       }),
     });
   };
@@ -86,7 +87,6 @@ const ShapeLayer = ({
             setNode(ref);
           }}
           {...shapeProps}
-          fill={shapeProps.fill}
           draggable
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
@@ -99,7 +99,18 @@ const ShapeLayer = ({
             setNode(ref);
           }}
           {...shapeProps}
-          fill={shapeProps.fill}
+          draggable
+          onDragEnd={handleDragEnd}
+          onTransformEnd={handleTransformEnd}
+        />
+      )}
+      {shapeType === "LINE" && (
+        <Line
+          onClick={onSelect}
+          ref={(ref) => {
+            setNode(ref);
+          }}
+          {...shapeProps}
           draggable
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}

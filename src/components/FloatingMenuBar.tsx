@@ -10,9 +10,8 @@ import {
   Type,
   Info,
 } from "lucide-react";
-import DarkModeToggle from "./buttons/DarkModeToggle";
 import { v4 as uuidv4 } from "uuid";
-import { BlockPicker, CirclePicker, SketchPicker } from "react-color";
+import { BlockPicker } from "react-color";
 
 const FloatingMenuBar = (props: any) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -98,7 +97,7 @@ const FloatingMenuBar = (props: any) => {
   }, []);
 
   return (
-    <div className="fixed left-0 right-0 top-0 z-[999] mt-5 flex flex-col items-center justify-center space-x-6">
+    <div className="  absolute left-2/4 top-0 z-[999] mt-5 flex -translate-x-2/4 flex-col items-center justify-center space-x-6">
       <div className="flex items-center justify-center space-x-6">
         <div className="flex items-center rounded-xl bg-background p-1 px-3 text-text drop-shadow-xl dark:bg-gray-700 dark:shadow-xl dark:shadow-accent/30">
           <DeleteButton onClick={handleDelete} disabled={!selectedId} />
@@ -151,7 +150,6 @@ const FloatingMenuBar = (props: any) => {
             )}
           </div>
         </div>
-        <DarkModeToggle />
       </div>
       {isDrawing && (drawMode === "RECT" || drawMode === "ELLIPSE") && (
         <div className="mt-4 flex items-center space-x-2 text-xs text-text/80 dark:text-white/40">

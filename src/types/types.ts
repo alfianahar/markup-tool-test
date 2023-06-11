@@ -23,15 +23,24 @@ export interface Triangle {
   x: number;
   y: number;
   sides: number;
-  // radiusX: number;
-  // radiusY: number;
   radius: number;
   fill: string;
   draggable: boolean;
   id: string;
 }
 
-export type Shape = Rectangle | Ellipse | Triangle;
+export interface Line {
+  type: "LINE";
+  x: number;
+  y: number;
+  points: number[];
+  stroke: string;
+  strokeWidth: number;
+  draggable: boolean;
+  id: string;
+}
+
+export type Shape = Rectangle | Ellipse | Triangle | Line;
 
 export interface ShapeLayerProps {
   shapeProps: Shape;

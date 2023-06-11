@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Ellipse, Layer, Rect, RegularPolygon, Stage } from "react-konva";
+import { Ellipse, Layer, Line, Rect, RegularPolygon, Stage } from "react-konva";
 import ImageLayer from "./ImageLayer";
 import { ImageData, Shape } from "../../types/types";
 import { v4 as uuidv4 } from "uuid";
@@ -25,6 +25,11 @@ const Canvas = (props: any) => {
     sides: number;
     radius: number;
   } | null>(null);
+  const [currentLine, setCurrentLine] = useState<{
+    x: number;
+    y: number;
+    points: number[];
+  } | null>(null);
 
   const {
     image,
@@ -48,11 +53,14 @@ const Canvas = (props: any) => {
 
   const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const position = e.target.getStage()?.getPointerPosition();
+    console.log(position);
     if (!position) return;
     if (
-      drawMode === "RECT" ||
-      drawMode === "ELLIPSE" ||
-      drawMode === "TRIANGLE"
+      isDrawing &&
+      (drawMode === "RECT" ||
+        drawMode === "ELLIPSE" ||
+        drawMode === "TRIANGLE" ||
+        drawMode === "LINE")
     ) {
       const newShape = {
         type: drawMode,
@@ -83,6 +91,16 @@ const Canvas = (props: any) => {
           radius: 0,
         };
         setCurrentTriangle(newTriangle);
+      } else if (drawMode === "LINE") {
+        const newLine = {
+          ...newShape,
+          points: [position.x, position.y],
+          stroke: selectedColor,
+          strokeWidth: 8,
+          width: 0,
+          height: 0,
+        };
+        setCurrentLine(newLine);
       }
     }
     checkDeselect(e);
@@ -111,6 +129,16 @@ const Canvas = (props: any) => {
         setItems((prevTriangle: Shape[]) => [...prevTriangle, currentTriangle]);
       }
       setCurrentTriangle(null);
+      setIsDrawing(false);
+    }
+    if (currentLine) {
+      if (
+        currentLine.points[2] !== currentLine.points[0] &&
+        currentLine.points[3] !== currentLine.points[1]
+      ) {
+        setItems((prevLine: Shape[]) => [...prevLine, currentLine]);
+      }
+      setCurrentLine(null);
       setIsDrawing(false);
     }
   };
@@ -146,9 +174,23 @@ const Canvas = (props: any) => {
         const height = position.y - currentTriangle.y;
         const updatedTriangle = {
           ...currentTriangle,
-          radius: Math.max(width, height),
+          radius: Math.max(width, height) * 1.15,
         };
         setCurrentTriangle(updatedTriangle);
+      }
+      if (drawMode === "LINE" && currentLine) {
+        const x1 = currentLine.x;
+        const y1 = currentLine.y;
+        const x2 = position.x;
+        const y2 = position.y;
+        console.log([x1, y1, x2, y2]);
+        const updatedLine = {
+          ...currentLine,
+          points: [x1, y1, x2, y2],
+          width: x2 - x1,
+          height: y2 - y1,
+        };
+        setCurrentLine(updatedLine);
       }
     }
   };
@@ -197,7 +239,9 @@ const Canvas = (props: any) => {
             isSelected={shape.id === selectedId}
             onSelect={() => {
               selectShape(shape.id);
-              setSelectedColor(shape.fill);
+              shape.type === "LINE"
+                ? setSelectedColor(shape.stroke)
+                : setSelectedColor(shape.fill);
             }}
             onChange={(newAttrs: Shape) => {
               const shapes = items.slice();
@@ -231,6 +275,9 @@ const Canvas = (props: any) => {
             fill="transparent"
             stroke={selectedColor}
           />
+        )}
+        {currentLine && (
+          <Line {...currentLine} fill="transparent" stroke={selectedColor} />
         )}
       </Layer>
     </Stage>
