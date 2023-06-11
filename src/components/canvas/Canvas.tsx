@@ -7,6 +7,19 @@ import Konva from "konva";
 import ShapeLayer from "./ShapeLayer";
 
 const Canvas = (props: any) => {
+  const {
+    image,
+    items,
+    setItems,
+    selectedId,
+    selectShape,
+    isDrawing,
+    setIsDrawing,
+    drawMode,
+    selectedColor,
+    setSelectedColor,
+  } = props;
+
   const [currentRectangle, setCurrentRectangle] = useState<{
     x: number;
     y: number;
@@ -30,20 +43,9 @@ const Canvas = (props: any) => {
     y: number;
     points: number[];
   } | null>(null);
+  let penType = items.filter((i: Shape) => i.type === "PEN");
 
-  const {
-    image,
-    items,
-    setItems,
-    selectedId,
-    selectShape,
-    isDrawing,
-    setIsDrawing,
-    drawMode,
-    selectedColor,
-    setSelectedColor,
-  } = props;
-
+  // DESELCET ITEMS
   const checkDeselect = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const clickedOnEmpty = e.target === e.target.getStage();
     if (clickedOnEmpty) {
@@ -51,16 +53,11 @@ const Canvas = (props: any) => {
     }
   };
 
+  // WHEN MOCUSE CLICK ON CANVAS
   const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const position = e.target.getStage()?.getPointerPosition();
     if (!position) return;
-    if (
-      isDrawing &&
-      (drawMode === "RECT" ||
-        drawMode === "ELLIPSE" ||
-        drawMode === "TRIANGLE" ||
-        drawMode === "LINE")
-    ) {
+    if (isDrawing) {
       const newShape = {
         type: drawMode,
         x: position.x,
@@ -90,56 +87,23 @@ const Canvas = (props: any) => {
           radius: 0,
         };
         setCurrentTriangle(newTriangle);
-      } else if (drawMode === "LINE") {
+      } else if (drawMode === "LINE" || drawMode === "PEN") {
         const newLine = {
           ...newShape,
-          points: [],
+          points: [position.x, position.y],
           stroke: selectedColor,
           strokeWidth: 4,
+          lineCap: "round",
+          lineJoin: "round",
         };
+
         setCurrentLine(newLine);
       }
     }
     checkDeselect(e);
   };
 
-  const handleMouseUp = () => {
-    if (currentRectangle) {
-      if (currentRectangle.width !== 0 && currentRectangle.height !== 0) {
-        setItems((prevRectangles: Shape[]) => [
-          ...prevRectangles,
-          currentRectangle,
-        ]);
-      }
-      setCurrentRectangle(null);
-      setIsDrawing(false);
-    }
-    if (currentEllipse) {
-      if (currentEllipse.radiusX !== 0 && currentEllipse.radiusY !== 0) {
-        setItems((prevEllipses: Shape[]) => [...prevEllipses, currentEllipse]);
-      }
-      setCurrentEllipse(null);
-      setIsDrawing(false);
-    }
-    if (currentTriangle) {
-      if (currentTriangle.radius !== 0) {
-        setItems((prevTriangle: Shape[]) => [...prevTriangle, currentTriangle]);
-      }
-      setCurrentTriangle(null);
-      setIsDrawing(false);
-    }
-    if (currentLine) {
-      if (
-        currentLine.points[2] !== currentLine.points[0] &&
-        currentLine.points[3] !== currentLine.points[1]
-      ) {
-        setItems((prevLine: Shape[]) => [...prevLine, currentLine]);
-      }
-      setCurrentLine(null);
-      setIsDrawing(false);
-    }
-  };
-
+  // WHEN MOCUSE STILL HOLDING CLICK ON CANVAS
   const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // Check if the SHIFT key is pressed
     const isShiftPressed = e.evt.shiftKey;
@@ -186,9 +150,57 @@ const Canvas = (props: any) => {
         };
         setCurrentLine(updatedLine);
       }
+      if (drawMode === "PEN" && currentLine) {
+        currentLine.points = currentLine.points.concat([
+          position.x,
+          position.y,
+        ]);
+        const updatedLine = {
+          ...currentLine,
+          x: 0,
+          y: 0,
+        };
+
+        setCurrentLine(updatedLine);
+      }
     }
   };
 
+  // WHEN MOUSE REALEASE IT CLICK
+  const handleMouseUp = () => {
+    if (currentRectangle) {
+      if (currentRectangle.width !== 0 && currentRectangle.height !== 0) {
+        setItems((prevItems: Shape[]) => [...prevItems, currentRectangle]);
+      }
+      setCurrentRectangle(null);
+      setIsDrawing(false);
+    } else if (currentEllipse) {
+      if (currentEllipse.radiusX !== 0 && currentEllipse.radiusY !== 0) {
+        setItems((prevItems: Shape[]) => [...prevItems, currentEllipse]);
+      }
+      setCurrentEllipse(null);
+      setIsDrawing(false);
+    } else if (currentTriangle) {
+      if (currentTriangle.radius !== 0) {
+        setItems((prevItems: Shape[]) => [...prevItems, currentTriangle]);
+      }
+      setCurrentTriangle(null);
+      setIsDrawing(false);
+    } else if (currentLine) {
+      if (
+        (currentLine.points[2] !== currentLine.points[0] &&
+          currentLine.points[3] !== currentLine.points[1]) ||
+        drawMode === "PEN"
+      ) {
+        console.log("first");
+        setItems((prevItems: Shape[]) => [...prevItems, currentLine]);
+      }
+      setCurrentLine(null);
+      setIsDrawing(false);
+    }
+  };
+
+  // CHANGING COLOR PICKER BASED SELECTED ITEMS AND UPDATE WHEN CHANGED
   useEffect(() => {
     const index = items.findIndex((r: Shape) => r.id === selectedId);
     if (index !== -1 && items[index].fill !== selectedColor) {
@@ -198,8 +210,6 @@ const Canvas = (props: any) => {
       setItems(updatedItems);
     }
   }, [selectedId, selectedColor, items]);
-
-  console.log(items);
 
   return (
     <Stage
@@ -234,7 +244,7 @@ const Canvas = (props: any) => {
             isSelected={shape.id === selectedId}
             onSelect={() => {
               selectShape(shape.id);
-              shape.type === "LINE"
+              shape.type === "LINE" || shape.type === "PEN"
                 ? setSelectedColor(shape.stroke)
                 : setSelectedColor(shape.fill);
             }}
@@ -249,6 +259,7 @@ const Canvas = (props: any) => {
         ))}
       </Layer>
 
+      {/* FOR DRAWING */}
       <Layer>
         {currentRectangle && (
           <Rect

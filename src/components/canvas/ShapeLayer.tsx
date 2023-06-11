@@ -33,10 +33,10 @@ const ShapeLayer = ({
     node.scaleX(1);
     node.scaleY(1);
     const [width, height] = [scaleX * node.width(), scaleY * node.height()];
-    console.log(node);
-    console.log(width, height);
+
+    // FOR LINE AND PEN TOOL RESIZER
     let scaledPoints;
-    if (shapeType === "LINE") {
+    if (shapeType === "LINE" || shapeType === "PEN") {
       const points = node.attrs.points;
       scaledPoints = points.map((point: number, index: number) => {
         if (index % 2 === 0) {
@@ -53,7 +53,6 @@ const ShapeLayer = ({
       ...shapeProps,
       x: node.x(),
       y: node.y(),
-      // set minimal value
       ...(shapeType === "RECT" && {
         width: width,
         height: height,
@@ -65,7 +64,7 @@ const ShapeLayer = ({
       ...(shapeType === "TRIANGLE" && {
         radius: (node.width() / 2) * scaleX,
       }),
-      ...(shapeType === "LINE" && {
+      ...((shapeType === "LINE" || shapeType === "PEN") && {
         x: node.x(),
         y: node.y(),
         points: scaledPoints, // Update the points of the line
@@ -121,7 +120,7 @@ const ShapeLayer = ({
           onTransformEnd={handleTransformEnd}
         />
       )}
-      {shapeType === "LINE" && (
+      {(shapeType === "LINE" || shapeType === "PEN") && (
         <Line
           onClick={onSelect}
           ref={(ref) => {

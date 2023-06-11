@@ -30,7 +30,7 @@ export interface Triangle {
 }
 
 export interface Line {
-  type: "LINE";
+  type: "LINE" | "PEN";
   x: number;
   y: number;
   points: number[];
@@ -38,6 +38,7 @@ export interface Line {
   strokeWidth: number;
   draggable: boolean;
   id: string;
+  fill?: string;
 }
 
 export type Shape = Rectangle | Ellipse | Triangle | Line;

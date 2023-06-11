@@ -14,10 +14,6 @@ import { v4 as uuidv4 } from "uuid";
 import { BlockPicker } from "react-color";
 
 const FloatingMenuBar = (props: any) => {
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const fileEl = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const {
     image,
     setImage,
@@ -30,6 +26,10 @@ const FloatingMenuBar = (props: any) => {
     selectedColor,
     setSelectedColor,
   } = props;
+
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const fileEl = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const shapesButton = [
     { shape: Square, mode: "RECT", size: 24 },
@@ -151,6 +151,7 @@ const FloatingMenuBar = (props: any) => {
           </div>
         </div>
       </div>
+      {isDrawing ? "TRUE" : "FALSE"}
       {isDrawing && (drawMode === "RECT" || drawMode === "ELLIPSE") && (
         <div className="mt-4 flex items-center space-x-2 text-xs text-text/80 dark:text-white/40">
           <Info size={20} />
