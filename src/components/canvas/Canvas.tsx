@@ -53,7 +53,6 @@ const Canvas = (props: any) => {
 
   const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const position = e.target.getStage()?.getPointerPosition();
-    console.log(position);
     if (!position) return;
     if (
       isDrawing &&
@@ -94,11 +93,9 @@ const Canvas = (props: any) => {
       } else if (drawMode === "LINE") {
         const newLine = {
           ...newShape,
-          points: [position.x, position.y],
+          points: [],
           stroke: selectedColor,
-          strokeWidth: 8,
-          width: 0,
-          height: 0,
+          strokeWidth: 4,
         };
         setCurrentLine(newLine);
       }
@@ -179,16 +176,13 @@ const Canvas = (props: any) => {
         setCurrentTriangle(updatedTriangle);
       }
       if (drawMode === "LINE" && currentLine) {
-        const x1 = currentLine.x;
-        const y1 = currentLine.y;
-        const x2 = position.x;
-        const y2 = position.y;
-        console.log([x1, y1, x2, y2]);
+        const width = position.x - currentLine.x;
+        const height = position.y - currentLine.y;
         const updatedLine = {
           ...currentLine,
-          points: [x1, y1, x2, y2],
-          width: x2 - x1,
-          height: y2 - y1,
+          points: [0, 0, width, height],
+          width: width,
+          height: height,
         };
         setCurrentLine(updatedLine);
       }
@@ -200,6 +194,7 @@ const Canvas = (props: any) => {
     if (index !== -1 && items[index].fill !== selectedColor) {
       const updatedItems = [...items];
       updatedItems[index].fill = selectedColor;
+      updatedItems[index].stroke = selectedColor;
       setItems(updatedItems);
     }
   }, [selectedId, selectedColor, items]);

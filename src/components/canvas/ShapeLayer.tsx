@@ -35,6 +35,20 @@ const ShapeLayer = ({
     const [width, height] = [scaleX * node.width(), scaleY * node.height()];
     console.log(node);
     console.log(width, height);
+    let scaledPoints;
+    if (shapeType === "LINE") {
+      const points = node.attrs.points;
+      scaledPoints = points.map((point: number, index: number) => {
+        if (index % 2 === 0) {
+          // X coordinate
+          return point * scaleX;
+        } else {
+          // Y coordinate
+          return point * scaleY;
+        }
+      });
+    }
+
     onChange({
       ...shapeProps,
       x: node.x(),
@@ -52,6 +66,9 @@ const ShapeLayer = ({
         radius: (node.width() / 2) * scaleX,
       }),
       ...(shapeType === "LINE" && {
+        x: node.x(),
+        y: node.y(),
+        points: scaledPoints, // Update the points of the line
         width: width,
         height: height,
       }),
