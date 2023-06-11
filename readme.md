@@ -16,6 +16,14 @@ Tech stack
 - ⚛️ React Konva
 - 🎨 Tailwind + Lucide Icon
 
+## Installation
+
+Install with yarn (recommendation)
+
+`yarn Install`
+
+`yarn dev`
+
 ## Feedback
 
 If you have any feedback, please reach out to us at alfian.aswinda@gmail.com
