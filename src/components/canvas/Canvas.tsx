@@ -19,6 +19,12 @@ const Canvas = (props: any) => {
     radiusX: number;
     radiusY: number;
   } | null>(null);
+  const [currentTriangle, setCurrentTriangle] = useState<{
+    x: number;
+    y: number;
+    sides: number;
+    radius: number;
+  } | null>(null);
 
   const {
     image,
@@ -169,11 +175,10 @@ const Canvas = (props: any) => {
             onChange={(newAttrs: Shape) => {
               const shapes = items.slice();
               const index = shapes.findIndex((r: Shape) => r.id === shape.id);
+              console.log(newAttrs);
               shapes[index] = newAttrs;
               setItems(shapes);
             }}
-            // selectedColor={selectedColor}
-            // setSelectedColor={setSelectedColor}
             drawMode={drawMode}
           />
         ))}

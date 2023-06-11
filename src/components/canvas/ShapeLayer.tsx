@@ -9,15 +9,12 @@ const ShapeLayer = ({
   isSelected,
   onSelect,
   onChange,
-}: // selectedColor,
-// setSelectedColor,
-ShapeLayerProps) => {
+}: ShapeLayerProps) => {
   const [node, setNode] = useState<
     Konva.Rect | Konva.Ellipse | Konva.Text | null
   >();
   const trRef = useRef<Konva.Transformer>(null);
   const shapeType = shapeProps.type;
-  // const prevSelectedColor = useRef<string | undefined>(selectedColor);
 
   const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
     onChange({
@@ -36,13 +33,20 @@ ShapeLayerProps) => {
     // we will reset it back
     node.scaleX(1);
     node.scaleY(1);
+    const [width, height] = [scaleX * node.width(), scaleY * node.height()];
     onChange({
       ...shapeProps,
       x: node.x(),
       y: node.y(),
       // set minimal value
-      width: Math.max(5, node.width() * scaleX),
-      height: Math.max(node.height() * scaleY),
+      ...(shapeType === "RECT" && {
+        width: width,
+        height: height,
+      }),
+      ...(shapeType === "ELLIPSE" && {
+        radiusX: Math.floor(width / 2),
+        radiusY: Math.floor(height / 2),
+      }),
     });
   };
 
@@ -54,25 +58,6 @@ ShapeLayerProps) => {
     }
   }, [isSelected]);
 
-  // useEffect(() => {
-  //   if (!isSelected) {
-  //     prevSelectedColor.current = selectedColor;
-  //   }
-  // }, [selectedColor, isSelected]);
-
-  // useEffect(() => {
-  //   if (
-  //     node &&
-  //     isSelected &&
-  //     selectedColor &&
-  //     prevSelectedColor.current !== selectedColor
-  //   ) {
-  //     node.setAttrs({
-  //       fill: selectedColor,
-  //     });
-  //   }
-  // }, [node, isSelected, selectedColor, setSelectedColor]);
-  // console.log(shapeProps);
   return (
     <>
       {shapeType === "RECT" && (

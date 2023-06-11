@@ -18,16 +18,24 @@ export interface Ellipse {
   draggable: boolean;
   id: string;
 }
+export interface Triangle {
+  type: "TRIANGLE";
+  x: number;
+  y: number;
+  sides: number;
+  radius: number;
+  fill: string;
+  draggable: boolean;
+  id: string;
+}
 
-export type Shape = Rectangle | Ellipse;
+export type Shape = Rectangle | Ellipse | Triangle;
 
 export interface ShapeLayerProps {
   shapeProps: Shape;
   isSelected: boolean;
   onSelect: () => void;
   onChange: (newAttrs: Shape) => void;
-  // selectedColor?: string;
-  // setSelectedColor?: (color: string) => void;
   drawMode?: string;
 }
 
