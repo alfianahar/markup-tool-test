@@ -91,7 +91,7 @@ const ShapeLayer = ({
             setNode(node);
           }}
           {...shapeProps}
-          draggable
+          draggable={isSelected}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />
@@ -103,7 +103,7 @@ const ShapeLayer = ({
             setNode(ref);
           }}
           {...shapeProps}
-          draggable
+          draggable={isSelected}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />
@@ -115,7 +115,7 @@ const ShapeLayer = ({
             setNode(ref);
           }}
           {...shapeProps}
-          draggable
+          draggable={isSelected}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />
@@ -127,7 +127,7 @@ const ShapeLayer = ({
             setNode(ref);
           }}
           {...shapeProps}
-          draggable
+          draggable={isSelected}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />

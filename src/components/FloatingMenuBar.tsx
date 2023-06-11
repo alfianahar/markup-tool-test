@@ -151,7 +151,6 @@ const FloatingMenuBar = (props: any) => {
           </div>
         </div>
       </div>
-      {isDrawing ? "TRUE" : "FALSE"}
       {isDrawing && (drawMode === "RECT" || drawMode === "ELLIPSE") && (
         <div className="mt-4 flex items-center space-x-2 text-xs text-text/80 dark:text-white/40">
           <Info size={20} />
