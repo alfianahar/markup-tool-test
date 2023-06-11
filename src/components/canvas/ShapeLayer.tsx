@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShapeLayerProps } from "../../types/types";
-import { Ellipse, Rect, Transformer } from "react-konva";
+import { Ellipse, Rect, RegularPolygon, Transformer } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 
@@ -11,7 +11,7 @@ const ShapeLayer = ({
   onChange,
 }: ShapeLayerProps) => {
   const [node, setNode] = useState<
-    Konva.Rect | Konva.Ellipse | Konva.Text | null
+    Konva.Rect | Konva.Ellipse | Konva.RegularPolygon | null
   >();
   const trRef = useRef<Konva.Transformer>(null);
   const shapeType = shapeProps.type;
@@ -34,6 +34,7 @@ const ShapeLayer = ({
     node.scaleX(1);
     node.scaleY(1);
     const [width, height] = [scaleX * node.width(), scaleY * node.height()];
+    console.log(node);
     onChange({
       ...shapeProps,
       x: node.x(),
@@ -46,6 +47,12 @@ const ShapeLayer = ({
       ...(shapeType === "ELLIPSE" && {
         radiusX: Math.floor(width / 2),
         radiusY: Math.floor(height / 2),
+      }),
+      ...(shapeType === "TRIANGLE" && {
+        // radius:
+        //   Math.max(scaleX, scaleY) * Math.max(node.width(), node.height()),
+        radius: (node.width() / 2) * scaleX,
+        // height: height,
       }),
     });
   };
@@ -74,6 +81,19 @@ const ShapeLayer = ({
       )}
       {shapeType === "ELLIPSE" && (
         <Ellipse
+          onClick={onSelect}
+          ref={(ref) => {
+            setNode(ref);
+          }}
+          {...shapeProps}
+          fill={shapeProps.fill}
+          draggable
+          onDragEnd={handleDragEnd}
+          onTransformEnd={handleTransformEnd}
+        />
+      )}
+      {shapeType === "TRIANGLE" && (
+        <RegularPolygon
           onClick={onSelect}
           ref={(ref) => {
             setNode(ref);

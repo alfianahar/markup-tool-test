@@ -23,6 +23,8 @@ export interface Triangle {
   x: number;
   y: number;
   sides: number;
+  // radiusX: number;
+  // radiusY: number;
   radius: number;
   fill: string;
   draggable: boolean;

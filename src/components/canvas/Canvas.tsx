@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Ellipse, Layer, Rect, Stage } from "react-konva";
+import { Ellipse, Layer, Rect, RegularPolygon, Stage } from "react-konva";
 import ImageLayer from "./ImageLayer";
 import { ImageData, Shape } from "../../types/types";
 import { v4 as uuidv4 } from "uuid";
@@ -49,7 +49,11 @@ const Canvas = (props: any) => {
   const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const position = e.target.getStage()?.getPointerPosition();
     if (!position) return;
-    if (drawMode === "RECT" || drawMode === "ELLIPSE") {
+    if (
+      drawMode === "RECT" ||
+      drawMode === "ELLIPSE" ||
+      drawMode === "TRIANGLE"
+    ) {
       const newShape = {
         type: drawMode,
         x: position.x,
@@ -72,6 +76,13 @@ const Canvas = (props: any) => {
           radiusY: 0,
         };
         setCurrentEllipse(newEllipse);
+      } else if (drawMode === "TRIANGLE") {
+        const newTriangle = {
+          ...newShape,
+          sides: 3,
+          radius: 0,
+        };
+        setCurrentTriangle(newTriangle);
       }
     }
     checkDeselect(e);
@@ -93,6 +104,13 @@ const Canvas = (props: any) => {
         setItems((prevEllipses: Shape[]) => [...prevEllipses, currentEllipse]);
       }
       setCurrentEllipse(null);
+      setIsDrawing(false);
+    }
+    if (currentTriangle) {
+      if (currentTriangle.radius !== 0) {
+        setItems((prevTriangle: Shape[]) => [...prevTriangle, currentTriangle]);
+      }
+      setCurrentTriangle(null);
       setIsDrawing(false);
     }
   };
@@ -122,6 +140,15 @@ const Canvas = (props: any) => {
           radiusY: isShiftPressed ? Math.min(radiusX, radiusY) : radiusY,
         };
         setCurrentEllipse(updatedEllipse);
+      }
+      if (drawMode === "TRIANGLE" && currentTriangle) {
+        const width = position.x - currentTriangle.x;
+        const height = position.y - currentTriangle.y;
+        const updatedTriangle = {
+          ...currentTriangle,
+          radius: Math.max(width, height),
+        };
+        setCurrentTriangle(updatedTriangle);
       }
     }
   };
@@ -175,7 +202,6 @@ const Canvas = (props: any) => {
             onChange={(newAttrs: Shape) => {
               const shapes = items.slice();
               const index = shapes.findIndex((r: Shape) => r.id === shape.id);
-              console.log(newAttrs);
               shapes[index] = newAttrs;
               setItems(shapes);
             }}
@@ -195,6 +221,13 @@ const Canvas = (props: any) => {
         {currentEllipse && (
           <Ellipse
             {...currentEllipse}
+            fill="transparent"
+            stroke={selectedColor}
+          />
+        )}
+        {currentTriangle && (
+          <RegularPolygon
+            {...currentTriangle}
             fill="transparent"
             stroke={selectedColor}
           />
