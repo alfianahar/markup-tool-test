@@ -11,12 +11,14 @@
   "dependencies": {
     "lucide-react": "^0.241.0",
     "react": "^18.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-toggle-dark-mode": "^1.1.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
+    "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.0.6",
     "@types/uuid": "^9.0.2",
     "@vitejs/plugin-react": "^2.1.0",

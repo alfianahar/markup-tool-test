@@ -9,6 +9,7 @@ function App() {
   const [rectangles, setRectangles] = useState<any[]>([]);
   const [selectedId, selectShape] = useState<any>(null);
   const [image, setImage] = useState<ImageData | null>(null);
+  const [selectedColor, setSelectedColor] = useState("#4a8c96");
 
   const handleDelete = () => {
     if (selectedId) {
@@ -46,6 +47,8 @@ function App() {
         handleDelete={handleDelete}
         drawMode={drawMode}
         setDrawMode={setDrawMode}
+        selectedColor={selectedColor}
+        setSelectedColor={setSelectedColor}
       />
       <Canvas
         image={image}

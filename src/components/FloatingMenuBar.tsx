@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useRef } from "react";
+import { ChangeEventHandler, useRef, useState } from "react";
 import DeleteButton from "./buttons/DeleteButton";
 import {
   ImagePlus,
@@ -11,8 +11,10 @@ import {
 } from "lucide-react";
 import DarkModeToggle from "./buttons/DarkModeToggle";
 import { v4 as uuidv4 } from "uuid";
+import { BlockPicker, CirclePicker, SketchPicker } from "react-color";
 
 const FloatingMenuBar = (props: any) => {
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const fileEl = useRef<HTMLInputElement>(null);
 
   const {
@@ -24,6 +26,8 @@ const FloatingMenuBar = (props: any) => {
     handleDelete,
     drawMode,
     setDrawMode,
+    selectedColor,
+    setSelectedColor,
   } = props;
 
   const toggleDrawingMode = (e: string) => {
@@ -65,13 +69,17 @@ const FloatingMenuBar = (props: any) => {
   };
   console.log(drawMode);
 
+  const toggleColorPicker = () => {
+    setShowColorPicker(!showColorPicker);
+  };
+
   const shapesButton = [
     { shape: Square, mode: "RECT", size: 24 },
     { shape: Circle, mode: "ELLIPSE", size: 24 },
     { shape: Triangle, mode: "TRIANGLE", size: 24 },
     { shape: Minus, mode: "LINE", size: 26 },
     { shape: Pencil, mode: "PEN", size: 22 },
-    { shape: Type, mode: "Type", size: 22 },
+    { shape: Type, mode: "TYPE", size: 22 },
   ];
 
   return (
@@ -101,19 +109,6 @@ const FloatingMenuBar = (props: any) => {
             />
           </div>
         ))}
-        {/* <div
-          className={`mx-0.5 rounded-xl p-2 transition-all duration-150 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button ${
-            isDrawing && drawMode === "ELLIPSE"
-              ? "bg-dark-secondary-button dark:bg-secondary-button"
-              : ""
-          }`}
-        >
-          <Circle
-            onClick={() => toggleDrawingMode("ELLIPSE")}
-            color="#4a967a"
-            size={24}
-          />
-        </div> */}
         <input
           key={image?.id}
           type="file"
@@ -121,6 +116,22 @@ const FloatingMenuBar = (props: any) => {
           ref={fileEl}
           onChange={handleFileChange}
         />
+        <span className="ml-2 mr-4 h-6 border border-accent"></span>
+        <div
+          style={{ backgroundColor: selectedColor }}
+          className="rounded-md border-2 border-dark-background p-3 transition-all duration-100 ease-in dark:border-white"
+          onClick={toggleColorPicker}
+        >
+          {showColorPicker && (
+            <div className="absolute -bottom-10 -right-44 z-10">
+              <BlockPicker
+                color={selectedColor}
+                onChange={(col) => setSelectedColor(col.hex)}
+                triangle="hide"
+              />
+            </div>
+          )}
+        </div>
       </div>
       <DarkModeToggle />
     </div>
