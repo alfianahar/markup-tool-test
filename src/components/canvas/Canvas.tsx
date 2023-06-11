@@ -43,7 +43,11 @@ const Canvas = (props: any) => {
     y: number;
     points: number[];
   } | null>(null);
-  let penType = items.filter((i: Shape) => i.type === "PEN");
+  const [currentText, setCurrentText] = useState<{
+    x: number;
+    y: number;
+    width: number;
+  } | null>(null);
 
   // DESELCET ITEMS
   const checkDeselect = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -96,8 +100,15 @@ const Canvas = (props: any) => {
           lineCap: "round",
           lineJoin: "round",
         };
-
         setCurrentLine(newLine);
+      } else if (drawMode === "TEXT") {
+        const newText = {
+          ...newShape,
+          fontSize: 30,
+          text: "lorem ipsum",
+          width: 200,
+        };
+        setCurrentText(newText);
       }
     }
     checkDeselect(e);
@@ -160,8 +171,15 @@ const Canvas = (props: any) => {
           x: 0,
           y: 0,
         };
-
         setCurrentLine(updatedLine);
+      }
+      if (drawMode === "TEXT" && currentText) {
+        const updatedText = {
+          ...currentText,
+          x: position.x,
+          y: position.y,
+        };
+        setCurrentText(updatedText);
       }
     }
   };
@@ -192,10 +210,15 @@ const Canvas = (props: any) => {
           currentLine.points[3] !== currentLine.points[1]) ||
         drawMode === "PEN"
       ) {
-        console.log("first");
         setItems((prevItems: Shape[]) => [...prevItems, currentLine]);
       }
       setCurrentLine(null);
+      setIsDrawing(false);
+    } else if (currentText) {
+      if (currentText.width !== 0) {
+        setItems((prevItems: Shape[]) => [...prevItems, currentText]);
+      }
+      setCurrentText(null);
       setIsDrawing(false);
     }
   };
@@ -283,6 +306,9 @@ const Canvas = (props: any) => {
           />
         )}
         {currentLine && (
+          <Line {...currentLine} fill="transparent" stroke={selectedColor} />
+        )}
+        {currentText && (
           <Line {...currentLine} fill="transparent" stroke={selectedColor} />
         )}
       </Layer>

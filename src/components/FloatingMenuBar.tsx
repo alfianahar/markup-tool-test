@@ -37,7 +37,7 @@ const FloatingMenuBar = (props: any) => {
     { shape: Triangle, mode: "TRIANGLE", size: 24 },
     { shape: Minus, mode: "LINE", size: 26 },
     { shape: Pencil, mode: "PEN", size: 22 },
-    { shape: Type, mode: "TYPE", size: 22 },
+    { shape: Type, mode: "TEXT", size: 22 },
   ];
 
   const toggleDrawingMode = (e: string) => {

@@ -41,7 +41,20 @@ export interface Line {
   fill?: string;
 }
 
-export type Shape = Rectangle | Ellipse | Triangle | Line;
+export interface Text {
+  type: "TEXT";
+  x: number;
+  y: number;
+  width: number;
+  height?: number;
+  fontSize: number;
+  text: string;
+  draggable: boolean;
+  id: string;
+  fill?: string;
+}
+
+export type Shape = Rectangle | Ellipse | Triangle | Line | Text;
 
 export interface ShapeLayerProps {
   shapeProps: Shape;

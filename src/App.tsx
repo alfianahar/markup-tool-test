@@ -12,6 +12,7 @@ function App() {
   const [image, setImage] = useState<ImageData | null>(null);
   const [selectedColor, setSelectedColor] = useState("#4a8c96");
 
+  // DELETE WHEN EVENT KEY IS DELETE
   const handleDelete = () => {
     if (selectedId) {
       const updatedItems = items.filter((item) => item.id !== selectedId);

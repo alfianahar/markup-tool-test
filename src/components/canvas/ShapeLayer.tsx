@@ -1,8 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShapeLayerProps } from "../../types/types";
-import { Ellipse, Line, Rect, RegularPolygon, Transformer } from "react-konva";
+import {
+  Ellipse,
+  Line,
+  Rect,
+  RegularPolygon,
+  Text,
+  Transformer,
+} from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
+import { Html } from "react-konva-utils";
 
 const ShapeLayer = ({
   shapeProps,
@@ -11,10 +19,19 @@ const ShapeLayer = ({
   onChange,
 }: ShapeLayerProps) => {
   const [node, setNode] = useState<
-    Konva.Rect | Konva.Ellipse | Konva.RegularPolygon | Konva.Line | null
+    | Konva.Rect
+    | Konva.Ellipse
+    | Konva.RegularPolygon
+    | Konva.Line
+    | Konva.Text
+    | null
   >();
   const trRef = useRef<Konva.Transformer>(null);
   const shapeType = shapeProps.type;
+  const [isEditing, setIsEditing] = useState(false);
+  const [textValue, setTextValue] = useState(
+    shapeType === "TEXT" ? shapeProps.text : ""
+  );
 
   const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
     onChange({
@@ -71,7 +88,29 @@ const ShapeLayer = ({
         width: width,
         height: height,
       }),
+      ...(shapeType === "TEXT" && {
+        width: width,
+        height: height,
+      }),
     });
+  };
+
+  const handleTextClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTextValue(e.target.value);
+  };
+
+  const handleTextBlur = () => {
+    setIsEditing(false);
+    if (shapeType === "TEXT") {
+      onChange({
+        ...shapeProps,
+        text: textValue,
+      });
+    }
   };
 
   useEffect(() => {
@@ -131,6 +170,53 @@ const ShapeLayer = ({
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />
+      )}
+      {shapeType === "TEXT" && !isEditing && (
+        <Text
+          onClick={onSelect}
+          onDblClick={handleTextClick}
+          ref={(ref) => {
+            setNode(ref);
+          }}
+          {...shapeProps}
+          draggable={isSelected}
+          onDragEnd={handleDragEnd}
+          onTransformEnd={handleTransformEnd}
+          text={shapeProps.text}
+        />
+      )}
+      {isSelected && isEditing && shapeType === "TEXT" && (
+        <Html
+          divProps={{
+            style: {
+              opacity: 1,
+              backgroundColor: "transparent",
+              width: shapeProps.width + "px",
+            },
+          }}
+        >
+          <input
+            type="text"
+            value={textValue}
+            onChange={handleTextChange}
+            onBlur={handleTextBlur}
+            style={{
+              position: "absolute",
+              top: shapeProps.y + "px",
+              left: shapeProps.x + "px",
+              width: shapeProps.width + "px",
+              height: shapeProps.height + "px",
+              fontSize: shapeProps.fontSize + "px",
+              backgroundColor: "transparent",
+              marginTop: "-2px",
+              outline: "none",
+              color: shapeProps.fill,
+              overflowWrap: "break-word",
+              whiteSpace: "normal",
+            }}
+            autoFocus
+          />
+        </Html>
       )}
       {isSelected && (
         <Transformer
