@@ -1,5 +1,5 @@
-// types/types.ts
 export interface Rectangle {
+  type: "RECT";
   x: number;
   y: number;
   width: number;
@@ -8,12 +8,26 @@ export interface Rectangle {
   draggable: boolean;
   id: string;
 }
+export interface Ellipse {
+  type: "ELLIPSE";
+  x: number;
+  y: number;
+  radiusX: number;
+  radiusY: number;
+  fill: string;
+  draggable: boolean;
+  id: string;
+}
 
-export interface RectangleLayerProps {
-  shapeProps: Rectangle;
+export type Shape = Rectangle | Ellipse;
+
+export interface ShapeLayerProps {
+  shapeProps: Shape;
   isSelected: boolean;
   onSelect: () => void;
-  onChange: (newAttrs: Rectangle) => void;
+  onChange: (newAttrs: Shape) => void;
+  selectedColor?: string;
+  drawMode?: string;
 }
 
 export interface Position {

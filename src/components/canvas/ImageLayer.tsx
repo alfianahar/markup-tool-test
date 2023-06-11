@@ -8,8 +8,8 @@ const ImageLayer = ({ isSelected, onSelect, onChange, image }: any) => {
   const trRef = useRef<Konva.Transformer>(null);
   useEffect(() => {
     if (isSelected) {
-      trRef.current.nodes([imageRef.current]);
-      trRef.current.getLayer().batchDraw();
+      trRef.current?.nodes([imageRef.current!]);
+      trRef.current?.getLayer()?.batchDraw();
     }
   }, [isSelected]);
 
@@ -24,7 +24,7 @@ const ImageLayer = ({ isSelected, onSelect, onChange, image }: any) => {
         width={image.size.width}
         height={image.size.height}
         draggable
-        ref={imageRef}
+        ref={imageRef as React.RefObject<Konva.Image>}
         onDragEnd={(e: KonvaEventObject<DragEvent>) => {
           onChange({
             x: e.target.x(),
@@ -33,6 +33,7 @@ const ImageLayer = ({ isSelected, onSelect, onChange, image }: any) => {
         }}
         onTransformEnd={(e: KonvaEventObject<DragEvent>) => {
           const node = imageRef.current;
+          if (!node) return;
           const scaleX = node.scaleX();
           const scaleY = node.scaleY();
 
