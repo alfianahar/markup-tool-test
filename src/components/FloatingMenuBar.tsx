@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useRef, useState } from "react";
+import { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import DeleteButton from "./buttons/DeleteButton";
 import {
   ImagePlus,
@@ -16,6 +16,7 @@ import { BlockPicker, CirclePicker, SketchPicker } from "react-color";
 const FloatingMenuBar = (props: any) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const fileEl = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const {
     image,
@@ -29,6 +30,15 @@ const FloatingMenuBar = (props: any) => {
     selectedColor,
     setSelectedColor,
   } = props;
+
+  const shapesButton = [
+    { shape: Square, mode: "RECT", size: 24 },
+    { shape: Circle, mode: "ELLIPSE", size: 24 },
+    { shape: Triangle, mode: "TRIANGLE", size: 24 },
+    { shape: Minus, mode: "LINE", size: 26 },
+    { shape: Pencil, mode: "PEN", size: 22 },
+    { shape: Type, mode: "TYPE", size: 22 },
+  ];
 
   const toggleDrawingMode = (e: string) => {
     if (!isDrawing) {
@@ -67,20 +77,24 @@ const FloatingMenuBar = (props: any) => {
     };
     reader.readAsDataURL(file);
   };
-  console.log(drawMode);
 
   const toggleColorPicker = () => {
     setShowColorPicker(!showColorPicker);
   };
 
-  const shapesButton = [
-    { shape: Square, mode: "RECT", size: 24 },
-    { shape: Circle, mode: "ELLIPSE", size: 24 },
-    { shape: Triangle, mode: "TRIANGLE", size: 24 },
-    { shape: Minus, mode: "LINE", size: 26 },
-    { shape: Pencil, mode: "PEN", size: 22 },
-    { shape: Type, mode: "TYPE", size: 22 },
-  ];
+  const handleOutsideClick = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (containerRef.current && !containerRef.current.contains(target)) {
+      setShowColorPicker(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", handleOutsideClick);
+    return () => {
+      window.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[999] mb-12 flex items-center justify-center space-x-6">
@@ -96,6 +110,7 @@ const FloatingMenuBar = (props: any) => {
         </div>
         {shapesButton.map((el: any) => (
           <div
+            key={el.mode}
             className={`mx-0.5 rounded-xl p-2 transition-all duration-100 ease-in hover:bg-dark-secondary-button hover:dark:bg-secondary-button ${
               isDrawing && drawMode === el.mode
                 ? "bg-dark-secondary-button dark:bg-secondary-button"
@@ -117,11 +132,12 @@ const FloatingMenuBar = (props: any) => {
           onChange={handleFileChange}
         />
         <span className="ml-2 mr-4 h-6 border border-accent"></span>
-        <div
-          style={{ backgroundColor: selectedColor }}
-          className="rounded-md border-2 border-dark-background p-3 transition-all duration-100 ease-in dark:border-white"
-          onClick={toggleColorPicker}
-        >
+        <div ref={containerRef}>
+          <div
+            style={{ backgroundColor: selectedColor }}
+            className="rounded-md border-2 border-dark-background p-3 transition-all duration-100 ease-in dark:border-white"
+            onClick={toggleColorPicker}
+          ></div>
           {showColorPicker && (
             <div className="absolute -bottom-10 -right-44 z-10">
               <BlockPicker
