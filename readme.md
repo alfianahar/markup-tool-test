@@ -1,11 +1,8 @@
 # Simple Markup Tool (React Konva)
 
 Before i begin, Thanks a lot for the challenge, if this not fullfill, may i know what should i improve? Just email me.
-
 This is actually another of the technical test projects, and improved since last time i develop using FabricJs.
-
 Take a look on last project: https://github.com/alfianahar/markup-tool-react-fabricjs
-
 And about half year, i was asked to do this again
 
 ## Acknowledgements
