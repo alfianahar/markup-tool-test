@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Ellipse, Layer, Line, Rect, RegularPolygon, Stage } from "react-konva";
 import ImageLayer from "./ImageLayer";
-import { ImageData, Shape } from "../../types/types";
+import { ImageData, Rectangle, Shape } from "../../types/types";
 import { v4 as uuidv4 } from "uuid";
 import Konva from "konva";
 import ShapeLayer from "./ShapeLayer";
@@ -20,6 +20,12 @@ const Canvas = (props: any) => {
     setSelectedColor,
   } = props;
 
+  const [selectionRect, setSelectionRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
   const [currentRectangle, setCurrentRectangle] = useState<{
     x: number;
     y: number;
@@ -110,17 +116,24 @@ const Canvas = (props: any) => {
         };
         setCurrentText(newText);
       }
+    } else {
+      setSelectionRect({
+        x: position.x,
+        y: position.y,
+        width: 0,
+        height: 0,
+      });
     }
     checkDeselect(e);
   };
-
+  console.log(items);
   // WHEN MOCUSE STILL HOLDING CLICK ON CANVAS
   const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // Check if the SHIFT key is pressed
     const isShiftPressed = e.evt.shiftKey;
+    const position = e.target.getStage()?.getPointerPosition();
+    if (!position) return;
     if (isDrawing) {
-      const position = e.target.getStage()?.getPointerPosition();
-      if (!position) return;
       if (drawMode === "RECT" && currentRectangle) {
         const width = position.x - currentRectangle.x;
         const height = position.y - currentRectangle.y;
@@ -181,11 +194,31 @@ const Canvas = (props: any) => {
         };
         setCurrentText(updatedText);
       }
+    } else {
+      if (selectionRect) {
+        const width = position.x - selectionRect.x;
+        const height = position.y - selectionRect.y;
+        console.log(width, height);
+        setSelectionRect({
+          ...selectionRect,
+          width,
+          height,
+        });
+      }
     }
   };
 
   // WHEN MOUSE REALEASE IT CLICK
   const handleMouseUp = () => {
+    if (selectionRect) {
+      if (selectionRect.width !== 0 && selectionRect.height !== 0) {
+        const selectedShapes = items.filter((shape: any) =>
+          Konva.Util.haveIntersection(selectionRect, shape)
+        );
+        console.log("Selected shapes:", selectedShapes);
+      }
+      setSelectionRect(null);
+    }
     if (currentRectangle) {
       if (currentRectangle.width !== 0 && currentRectangle.height !== 0) {
         setItems((prevItems: Shape[]) => [...prevItems, currentRectangle]);
@@ -310,6 +343,16 @@ const Canvas = (props: any) => {
         )}
         {currentText && (
           <Line {...currentLine} fill="transparent" stroke={selectedColor} />
+        )}
+        {selectionRect && (
+          <Rect
+            x={selectionRect.x}
+            y={selectionRect.y}
+            width={selectionRect.width}
+            height={selectionRect.height}
+            stroke="rgba(74, 140, 150, 0.3)"
+            fill="rgba(74, 150, 122, 0.1)"
+          />
         )}
       </Layer>
     </Stage>
